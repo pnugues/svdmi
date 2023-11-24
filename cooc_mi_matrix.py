@@ -16,6 +16,7 @@ import cooccurrences as cooccur
 import regex as re
 from scipy.sparse import lil_matrix
 from tqdm import tqdm
+import sys
 
 
 class MutualInfo:
@@ -240,9 +241,19 @@ if __name__ == '__main__':
     VISUALIZATION = False # Visualizes  afew words in a 2D or 3D space
     BASE = '../../../corpus/'
     PCA_VECTOR_FILE = 'pca_vectors.txt'
-    dataset = 'dickens'  # 'dickens' 'selma' 'alice' 'short'
+    if len(sys.argv) > 1:
+        BASE = sys.argv[1]
+        dataset = 'from_command_line'
+    else:
+        BASE = '../../../corpus/'
+        dataset = 'dickens'  # 'dickens' 'selma' 'alice' 'short'
 
-    if dataset == 'dickens':
+    if dataset =='from_command_line':
+        path = BASE + '/'
+        text = load_corpus(path)
+        test_words = ['he', 'she', 'paris', 'table', 'rare', 'monday', 'sunday', 'man', 'woman', 'king', 'queen', 'boy',
+                      'girl']
+    elif dataset == 'dickens':
         path = BASE + 'Dickens/'
         text = load_corpus(path)
         test_words = ['he', 'she', 'paris', 'table', 'rare', 'monday', 'sunday', 'man', 'woman', 'king', 'queen', 'boy',

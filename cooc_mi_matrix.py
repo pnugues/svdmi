@@ -237,6 +237,7 @@ if __name__ == '__main__':
     CONTEXT_SIZE = 3
     CUTOFF_C = 5  # Minimal number of contexts, for dickens 5
     CUTOFF_W = 3  # Minimal number of words, for dickens 3
+    VISUALIZATION = False # Visualizes  afew words in a 2D or 3D space
     BASE = '../../../corpus/'
     PCA_VECTOR_FILE = 'pca_vectors.txt'
     dataset = 'dickens'  # 'dickens' 'selma' 'alice' 'short'
@@ -365,47 +366,48 @@ if __name__ == '__main__':
         print('boy - man + woman:', mi.closest_words_to_vector(vec_5, Us))
 
     # exit()
-    for w in closest_to_testwords:
-        idx = mi.word2idx_m[w]
-        plt.plot(Us[idx, 0], Us[idx, 1], 'o')
-        plt.text(Us[idx, 0], Us[idx, 1], mi.idx2word_m[idx])
-        for closest in closest_to_testwords[w]:
-            idx = mi.word2idx_m[closest]
-            plt.plot(Us[idx, 0], Us[idx, 1], '+')
-            plt.text(Us[idx, 0], Us[idx, 1], corpus.unique_words[idx])
-    plt.show()
+    if VISUALIZATION:
+        for w in closest_to_testwords:
+            idx = mi.word2idx_m[w]
+            plt.plot(Us[idx, 0], Us[idx, 1], 'o')
+            plt.text(Us[idx, 0], Us[idx, 1], mi.idx2word_m[idx])
+            for closest in closest_to_testwords[w]:
+                idx = mi.word2idx_m[closest]
+                plt.plot(Us[idx, 0], Us[idx, 1], '+')
+                plt.text(Us[idx, 0], Us[idx, 1], corpus.unique_words[idx])
+        plt.show()
 
-    plt.clf()
-    for w in closest_to_testwords:
-        idx = mi.word2idx_m[w]
-        plt.plot(Us[idx, 0], Us[idx, 2], 'o')
-        plt.text(Us[idx, 0], Us[idx, 2], mi.idx2word_m[idx])
-        for closest in closest_to_testwords[w]:
-            idx = mi.word2idx_m[closest]
-            plt.plot(Us[idx, 0], Us[idx, 2], '+')
+        plt.clf()
+        for w in closest_to_testwords:
+            idx = mi.word2idx_m[w]
+            plt.plot(Us[idx, 0], Us[idx, 2], 'o')
             plt.text(Us[idx, 0], Us[idx, 2], mi.idx2word_m[idx])
-    plt.show()
+            for closest in closest_to_testwords[w]:
+                idx = mi.word2idx_m[closest]
+                plt.plot(Us[idx, 0], Us[idx, 2], '+')
+                plt.text(Us[idx, 0], Us[idx, 2], mi.idx2word_m[idx])
+        plt.show()
 
-    for w in closest_to_testwords:
-        idx = mi.word2idx_m[w]
-        plt.plot(Us[idx, 1], Us[idx, 2], 'o')
-        plt.text(Us[idx, 1], Us[idx, 2], mi.idx2word_m[idx])
-        for closest in closest_to_testwords[w]:
-            idx = mi.word2idx_m[closest]
-            plt.plot(Us[idx, 1], Us[idx, 2], '+')
+        for w in closest_to_testwords:
+            idx = mi.word2idx_m[w]
+            plt.plot(Us[idx, 1], Us[idx, 2], 'o')
             plt.text(Us[idx, 1], Us[idx, 2], mi.idx2word_m[idx])
-    plt.show()
+            for closest in closest_to_testwords[w]:
+                idx = mi.word2idx_m[closest]
+                plt.plot(Us[idx, 1], Us[idx, 2], '+')
+                plt.text(Us[idx, 1], Us[idx, 2], mi.idx2word_m[idx])
+        plt.show()
 
-    fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
-    for w in closest_to_testwords:
-        i = mi.word2idx_m[w]
-        ax.plot(Us[i, 0], Us[i, 1], Us[i, 2], '*')
-        ax.text(Us[i, 0], Us[i, 1], Us[i, 2], mi.idx2word_m[i])
-        for closest in closest_to_testwords[w]:
-            i = mi.word2idx_m[closest]
-            ax.plot(Us[i, 0], Us[i, 1], Us[i, 2], '+')
+        fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+        for w in closest_to_testwords:
+            i = mi.word2idx_m[w]
+            ax.plot(Us[i, 0], Us[i, 1], Us[i, 2], '*')
             ax.text(Us[i, 0], Us[i, 1], Us[i, 2], mi.idx2word_m[i])
-    plt.show()
+            for closest in closest_to_testwords[w]:
+                i = mi.word2idx_m[closest]
+                ax.plot(Us[i, 0], Us[i, 1], Us[i, 2], '+')
+                ax.text(Us[i, 0], Us[i, 1], Us[i, 2], mi.idx2word_m[i])
+        plt.show()
 
     exit()
     # Below testing visualization

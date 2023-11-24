@@ -47,11 +47,12 @@ def get_files(dir, suffix):
 if __name__ == '__main__':
     dickens = True
     context_size = 3
+    BASE = '../../../corpus/'
     if dickens:
-        path = '../../../corpus/Dickens/'
+        path = BASE + 'Dickens/'
         test_words = ['he', 'she', 'paris', 'table', 'rare', 'monday', 'sunday']
     else:
-        path = '../../../corpus/Selma/'
+        path = BASE + 'Selma/'
         test_words = ['han', 'hon', 'att', 'bord', 'bordet', 'måndag', 'söndag']
 
     files = get_files(path, 'txt')

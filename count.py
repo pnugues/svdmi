@@ -6,6 +6,7 @@ __author__ = "Pierre Nugues"
 
 import sys
 import regex as re
+from collections import Counter
 
 
 def tokenize(text):
@@ -14,13 +15,7 @@ def tokenize(text):
 
 
 def count_unigrams(words):
-    frequency = {}
-    for word in words:
-        if word in frequency:
-            frequency[word] += 1
-        else:
-            frequency[word] = 1
-    return frequency
+    return Counter(words)
 
 
 if __name__ == '__main__':

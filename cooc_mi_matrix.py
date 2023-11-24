@@ -4,6 +4,7 @@ Pierre Nugues
 """
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 from scipy.spatial.distance import cosine
 import fbpca
 import time
@@ -54,7 +55,8 @@ class MutualInfo:
                                     self.contexts[c] >= self.cutoff_c}
         # get all the words used in the matrix
         words_m = sorted(set([w for w, c in self.word_context_pruned.keys()]))
-        contexts_m = sorted(set([c for w, c in self.word_context_pruned.keys()]))
+        contexts_m = sorted(
+            set([c for w, c in self.word_context_pruned.keys()]))
         # Build indices
         self.idx2word_m = {i: w for i, w in enumerate(words_m)}
         self.word2idx_m = {w: i for i, w in enumerate(words_m)}
@@ -65,22 +67,28 @@ class MutualInfo:
         self.mutual_info = {k: np.power(v, self.power)
                             for k, v in self.word_context_pruned.items()}
         mi_divisor = sum(self.mutual_info.values())
-        self.mutual_info = {k: v / mi_divisor for k, v in self.mutual_info.items()}
+        self.mutual_info = {k: v / mi_divisor for k,
+                            v in self.mutual_info.items()}
 
         # P(w) = #w^a/∑_i #(w_i)^a
-        p_reweighted_unigrams = {k: np.power(v, self.power) for k, v in self.unigrams.items()}
+        p_reweighted_unigrams = {k: np.power(
+            v, self.power) for k, v in self.unigrams.items()}
         unigram_divisor = sum(self.unigrams.values())
-        p_reweighted_unigrams = {k: v / unigram_divisor for k, v in p_reweighted_unigrams.items()}
+        p_reweighted_unigrams = {
+            k: v / unigram_divisor for k, v in p_reweighted_unigrams.items()}
 
         # P(C) = #C^a/∑_i #(C_i)^a
-        p_reweighted_contexts = {k: np.power(v, self.power) for k, v in self.contexts.items()}
+        p_reweighted_contexts = {k: np.power(
+            v, self.power) for k, v in self.contexts.items()}
         context_divisor = sum(p_reweighted_contexts.values())
-        p_reweighted_contexts = {k: v / context_divisor for k, v in p_reweighted_contexts.items()}
+        p_reweighted_contexts = {
+            k: v / context_divisor for k, v in p_reweighted_contexts.items()}
 
         for word, context in self.mutual_info:
             self.mutual_info[(word, context)] *= 1 / (
-                    p_reweighted_unigrams[word] * p_reweighted_contexts[context])
-            self.mutual_info[(word, context)] = math.log(self.mutual_info[(word, context)], 2)
+                p_reweighted_unigrams[word] * p_reweighted_contexts[context])
+            self.mutual_info[(word, context)] = math.log(
+                self.mutual_info[(word, context)], 2)
             if self.mutual_info[(word, context)] < 0:
                 self.mutual_info[(word, context)] = 0
         return self.mutual_info
@@ -133,7 +141,7 @@ def symmetric_contexts():
 
     # Extract contexts of three words, where there is a symmetry in the corpus
     # given that there is word1 focus_word word2, we have also word2 focus_word word1
-    for match in re.finditer('\\b(\w+) (\w+) (\w+)\\b(?= .+ \\b\\3 \\2 \\1\\b)', text, re.S):
+    for match in re.finditer('\\b(\p{L}+) (\p{L}+) (\p{L}+)\\b(?= .+ \\b\\3 \\2 \\1\\b)', text, re.S):
         print(match.group(1), match.group(2), match.group(3))
 
 
@@ -172,7 +180,8 @@ def unit_tests():
          corpus.words[idx + 1] == 'say' and corpus.words[idx + 2] == 'to']
     d = [idx for idx, word in enumerate(corpus.words) if corpus.words[idx] == 'to' and
          corpus.words[idx + 1] == 'say' and corpus.words[idx + 2] == 'it']
-    e = [idx for idx, word in enumerate(corpus.words) if corpus.words[idx] == 'say']
+    e = [idx for idx, word in enumerate(
+        corpus.words) if corpus.words[idx] == 'say']
     f = [idx for idx, word in enumerate(corpus.words) if corpus.words[idx] == 'it'
          and corpus.words[idx + 2] == 'to']
     g = [idx for idx, word in enumerate(corpus.words) if corpus.words[idx] == 'to'
@@ -180,7 +189,8 @@ def unit_tests():
     print(len(c) + len(d), len(e), len(f) + len(g))
 
     walked = [(k, v) for k, v in cooc.word_context.items() if k[0] == 'walked']
-    off_they = [(k, v) for k, v in cooc.word_context.items() if k[1] == ('off', 'they')]
+    off_they = [(k, v) for k, v in cooc.word_context.items()
+                if k[1] == ('off', 'they')]
     print('Word: walked', walked)
     print('Context: off___they', off_they)
 
@@ -194,7 +204,8 @@ def unit_tests():
          corpus.words[idx + 1] == 'think' and corpus.words[idx + 2] == 'you']
     d = [idx for idx, word in enumerate(corpus.words) if corpus.words[idx] == 'you' and
          corpus.words[idx + 1] == 'think' and corpus.words[idx + 2] == 'i']
-    e = [idx for idx, word in enumerate(corpus.words) if corpus.words[idx] == 'think']
+    e = [idx for idx, word in enumerate(
+        corpus.words) if corpus.words[idx] == 'think']
     f = [idx for idx, word in enumerate(corpus.words) if corpus.words[idx] == 'i'
          and corpus.words[idx + 2] == 'you']
     g = [idx for idx, word in enumerate(corpus.words) if corpus.words[idx] == 'you'
@@ -226,14 +237,17 @@ if __name__ == '__main__':
     CONTEXT_SIZE = 3
     CUTOFF_C = 5  # Minimal number of contexts, for dickens 5
     CUTOFF_W = 3  # Minimal number of words, for dickens 3
+    BASE = '../../../corpus/'
+    PCA_VECTOR_FILE = 'pca_vectors.txt'
     dataset = 'dickens'  # 'dickens' 'selma' 'alice' 'short'
+
     if dataset == 'dickens':
-        path = '../../../corpus/Dickens/'
+        path = BASE + 'Dickens/'
         text = load_corpus(path)
         test_words = ['he', 'she', 'paris', 'table', 'rare', 'monday', 'sunday', 'man', 'woman', 'king', 'queen', 'boy',
                       'girl']
     elif dataset == 'selma':
-        path = '../../../corpus/Selma/'
+        path = BASE + 'Selma/'
         text = load_corpus(path)
         test_words = ['han', 'hon', 'att', 'bord', 'bordet', 'måndag', 'söndag', 'man', 'kvinna', 'kung', 'drottning',
                       'pojke', 'flicka']
@@ -301,6 +315,12 @@ if __name__ == '__main__':
     # We normalize Us
     Us = Normalizer().fit_transform(Us)
     # We list words close to the test words
+
+    # Saving the vectors in a file
+    df = pd.DataFrame(Us, index=[mi.idx2word_m[i]
+                      for i in range(len(mi.idx2word_m))])
+    df.to_csv(PCA_VECTOR_FILE, sep=' ', header=False)
+
     closest_to_testwords = {}
     for w in test_words:
         if (w in corpus.word2idx and
@@ -311,27 +331,37 @@ if __name__ == '__main__':
 
     if dataset == 'dickens':
         print('distance 10 closest words sunday',
-              cosine(Us[mi.word2idx_m['sunday'], :], Us[mi.word2idx_m[closest_to_testwords['sunday'][1]], :]), '...',
+              cosine(Us[mi.word2idx_m['sunday'], :],
+                     Us[mi.word2idx_m[closest_to_testwords['sunday'][1]], :]), '...',
               cosine(Us[mi.word2idx_m['sunday'], :], Us[mi.word2idx_m[closest_to_testwords['sunday'][9]], :]))
         print('distance 10 closest words monday',
-              cosine(Us[mi.word2idx_m['monday'], :], Us[mi.word2idx_m[closest_to_testwords['monday'][1]], :]), '...',
+              cosine(Us[mi.word2idx_m['monday'], :],
+                     Us[mi.word2idx_m[closest_to_testwords['monday'][1]], :]), '...',
               cosine(Us[mi.word2idx_m['monday'], :], Us[mi.word2idx_m[closest_to_testwords['monday'][9]], :]))
 
-        print('distance sunday-saturday', cosine(Us[mi.word2idx_m['sunday'], :], Us[mi.word2idx_m['saturday'], :]))
-        print('distance monday-sunday', cosine(Us[mi.word2idx_m['monday'], :], Us[mi.word2idx_m['sunday'], :]))
-        print('distance monday-saturday', cosine(Us[mi.word2idx_m['monday'], :], Us[mi.word2idx_m['saturday'], :]))
+        print('distance sunday-saturday',
+              cosine(Us[mi.word2idx_m['sunday'], :], Us[mi.word2idx_m['saturday'], :]))
+        print('distance monday-sunday',
+              cosine(Us[mi.word2idx_m['monday'], :], Us[mi.word2idx_m['sunday'], :]))
+        print('distance monday-saturday',
+              cosine(Us[mi.word2idx_m['monday'], :], Us[mi.word2idx_m['saturday'], :]))
 
         print('Semantic operations:')
-        vec_1 = (Us[mi.word2idx_m['king']] - Us[mi.word2idx_m['man']] + Us[mi.word2idx_m['woman']])
+        vec_1 = (Us[mi.word2idx_m['king']] -
+                 Us[mi.word2idx_m['man']] + Us[mi.word2idx_m['woman']])
         # print(vec_1)
         print('king - man + woman:', mi.closest_words_to_vector(vec_1, Us))
-        vec_2 = (Us[mi.word2idx_m['queen']] - Us[mi.word2idx_m['woman']] + Us[mi.word2idx_m['man']])
+        vec_2 = (Us[mi.word2idx_m['queen']] -
+                 Us[mi.word2idx_m['woman']] + Us[mi.word2idx_m['man']])
         print('queen - woman + man:', mi.closest_words_to_vector(vec_2, Us))
-        vec_3 = (Us[mi.word2idx_m['he']] - Us[mi.word2idx_m['man']] + Us[mi.word2idx_m['woman']])
+        vec_3 = (Us[mi.word2idx_m['he']] -
+                 Us[mi.word2idx_m['man']] + Us[mi.word2idx_m['woman']])
         print('he - man + woman:', mi.closest_words_to_vector(vec_3, Us))
-        vec_4 = (Us[mi.word2idx_m['she']] - Us[mi.word2idx_m['woman']] + Us[mi.word2idx_m['man']])
+        vec_4 = (Us[mi.word2idx_m['she']] -
+                 Us[mi.word2idx_m['woman']] + Us[mi.word2idx_m['man']])
         print('she - woman + man:', mi.closest_words_to_vector(vec_4, Us))
-        vec_5 = (Us[mi.word2idx_m['boy']] - Us[mi.word2idx_m['man']] + Us[mi.word2idx_m['woman']])
+        vec_5 = (Us[mi.word2idx_m['boy']] -
+                 Us[mi.word2idx_m['man']] + Us[mi.word2idx_m['woman']])
         print('boy - man + woman:', mi.closest_words_to_vector(vec_5, Us))
 
     # exit()

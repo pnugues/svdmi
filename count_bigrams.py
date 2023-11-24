@@ -5,25 +5,19 @@ Usage: python count_bigrams.py < corpus.txt
 __author__ = "Pierre Nugues"
 
 import sys
-
-import regex
+import regex as re
+from collections import Counter
 
 
 def tokenize(text):
-    words = regex.findall(r'\p{L}+', text)
+    words = re.findall(r'\p{L}+', text)
     return words
 
 
 def count_bigrams(words):
     bigrams = [tuple(words[idx:idx + 2])
                for idx in range(len(words) - 1)]
-    frequencies = {}
-    for bigram in bigrams:
-        if bigram in frequencies:
-            frequencies[bigram] += 1
-        else:
-            frequencies[bigram] = 1
-    return frequencies
+    return Counter(bigrams)
 
 
 if __name__ == '__main__':

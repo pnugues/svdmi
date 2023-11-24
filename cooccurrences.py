@@ -171,12 +171,13 @@ if __name__ == '__main__':
     dickens = True
     UNORDERED_PAIRS = True
     CONTEXT_SIZE = 5
+    BASE = '../../../corpus/'
     if dickens:
-        path = '../../../corpus/Dickens/'
+        path = BASE + 'Dickens/'
         test_words = ['he', 'she', 'paris', 'table', 'rare', 'monday', 'sunday', 'man', 'woman', 'king', 'queen', 'boy',
                       'girl']
     else:
-        path = '../../../corpus/Selma/'
+        path = BASE + 'Selma/'
         test_words = ['han', 'hon', 'att', 'bord', 'bordet', 'måndag', 'söndag', 'man', 'kvinna', 'kung', 'drottning',
                       'pojke', 'flicka']
 

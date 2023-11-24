@@ -6,24 +6,19 @@ __author__ = "Pierre Nugues"
 
 import sys
 
-import regex
+import regex as re
+from collections import Counter
 
 
 def tokenize(text):
-    words = regex.findall(r'\p{L}+', text)
+    words = re.findall(r'\p{L}+', text)
     return words
 
 
 def count_trigrams(words):
     trigrams = [tuple(words[idx:idx + 3])
                 for idx in range(len(words) - 2)]
-    frequencies = {}
-    for trigram in trigrams:
-        if trigram in frequencies:
-            frequencies[trigram] += 1
-        else:
-            frequencies[trigram] = 1
-    return frequencies
+    return Counter(trigrams)
 
 
 if __name__ == '__main__':

@@ -5,8 +5,11 @@ import os
 
 
 class Corpus:
-    def __init__(self, text, context_size=3):
-        self.text = text.lower()
+    def __init__(self, text, lc=True, context_size=3):
+        if lc:
+            self.text = text.lower()
+        else:
+            self.text = text
         self.context_size = context_size
         self.words = None
         self.text_size = None

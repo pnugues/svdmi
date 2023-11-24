@@ -1,5 +1,5 @@
 # svdmi
-These programs compute embeddings with a singular value decomposition. They use a cooccurrence matrix with mutual information.
+These programs compute embeddings with a singular value decomposition (SVD or PCA). They use a cooccurrence matrix with mutual information (also called pointwise mutual information, PMI).
 
 To run the program, collect a corpus of texts and place the texts in a folder. All the texts must have a `.txt` suffix, Then just run:
 ```
